@@ -33,8 +33,11 @@ if __name__ == "__main__":
         t.start()
 
     logging.info('Joining all threads to the main')
+    logging.info(f'Main thread is: {threading.get_ident()}')
 
     for t in threads:
         t.join()
+
+    time.sleep(20)
 
     logging.info("Exiting the main thread")

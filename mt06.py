@@ -7,15 +7,13 @@ import time
 class Sample:
     def __init__(self):
         self.index = 0
-        self._mutex_lock = threading.Lock()
+        # self._mutex_lock = threading.Lock()
 
     def increment_mt(self):
-        with self._mutex_lock:
-            self.index = self.index + 1
+        self.index = self.index + 1
 
     def decrement_mt(self):
-        with self._mutex_lock:
-            self.index = self.index - 1
+        self.index = self.index - 1
 
     def increment_st(self):
         self.index = self.index + 1
@@ -40,7 +38,7 @@ class TestSample(unittest.TestCase):
 
     def test_multi_threaded_index_is_zero(self):
         sample = Sample()
-        n_threads = 4
+        n_threads = 5
         lock = threading.Lock()
         threads = []
 
@@ -55,10 +53,11 @@ class TestSample(unittest.TestCase):
         self.assertEqual(sample.index, 0)
 
     def operate(self, sample, lock):
+        rl = threading.RLock()
         for _ in range(100000):
-            # lock.acquire()
-            sample.increment_mt()
-            sample.decrement_mt()
+            with lock:
+                sample.increment_mt()
+                sample.decrement_mt()
             # lock.release()
 
 

@@ -19,7 +19,7 @@ if __name__ == "__main__":
     logging.info("Starting the main thread")
 
     # trailing comma in args tuple is required if there is only one argument
-    t1 = threading.Thread(target=foo, args=('thread 01', 2))
+    t1 = threading.Thread(target=foo, args=('thread 01', 2), daemon=True)
     t2 = threading.Thread(target=foo, args=('thread 02', 4))
     logging.info("Invoking thread 01 from main thread")
     t1.start()
@@ -27,5 +27,5 @@ if __name__ == "__main__":
     t2.start()
     logging.info("After the invocation of thread 01")
     logging.info("Main thread waits for the thread 01 to finish")
-    t1.join()
+    # t1.join()
     logging.info("Exiting the main thread")

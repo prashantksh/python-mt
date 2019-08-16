@@ -23,12 +23,12 @@ if __name__ == "__main__":
 
     logging.info("Starting the main thread")
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
         # foo will be called with 0, 1, 2 in this case
         # if we increase the range, the executor takes it by chunks
         # in this case, the executor starts 3 threads at a time, waits till they are finished, and then starts the news chunk
-        # executor.map(foo, range(10))
+        executor.map(foo, range(10))
 
         # single invocation
-        task = executor.submit(foo, 'Thread')
+        # task = executor.submit(foo, 'Thread')
         logging.info('after')
