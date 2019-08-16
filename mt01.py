@@ -5,7 +5,7 @@ import time
 
 def foo(thread_name, delay):
     logging.info(f"Run by {thread_name}")
-
+    time.tim
     # Just halt this thread for 2 seconds
     time.sleep(delay)
     logging.info(f"{thread_name} ends")
