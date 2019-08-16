@@ -7,14 +7,21 @@ import time
 class Sample:
     def __init__(self):
         self.index = 0
+        self._mutex_lock = threading.Lock()
 
-    def increment(self):
+    def increment_mt(self):
+        with self._mutex_lock:
+            self.index = self.index + 1
+
+    def decrement_mt(self):
+        with self._mutex_lock:
+            self.index = self.index - 1
+
+    def increment_st(self):
         self.index = self.index + 1
-        time.sleep(0.01)
 
-    def decrement(self):
+    def decrement_st(self):
         self.index = self.index - 1
-        time.sleep(0.01)
 
 
 class TestSample(unittest.TestCase):
@@ -26,24 +33,33 @@ class TestSample(unittest.TestCase):
     def test_single_threaded_index_is_zero(self):
         sample = Sample()
         for _ in range(100):
-            sample.increment()
-            sample.decrement()
+            sample.increment_st()
+            sample.decrement_st()
 
         self.assertEqual(sample.index, 0)
 
     def test_multi_threaded_index_is_zero(self):
         sample = Sample()
         n_threads = 4
+        lock = threading.Lock()
+        threads = []
+
         for _ in range(n_threads):
-            t = threading.Thread(target=self.operate, args=(sample,))
+            t = threading.Thread(target=self.operate, args=(sample, lock))
             t.start()
+            threads.append(t)
+
+        for t in threads:
+            t.join()
 
         self.assertEqual(sample.index, 0)
 
-    def operate(self, sample):
-        for _ in range(100):
-            sample.increment()
-            sample.decrement()
+    def operate(self, sample, lock):
+        for _ in range(100000):
+            # lock.acquire()
+            sample.increment_mt()
+            sample.decrement_mt()
+            # lock.release()
 
 
 if __name__ == '__main__':
